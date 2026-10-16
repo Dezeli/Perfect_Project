@@ -23,12 +23,13 @@ export default function Settings() {
         <Feather name="arrow-left" size={22} color="#EBCF9B" />
       </Pressable>
     </View>
-    <Card style={{ gap: 10, padding: 14 }}>
+    <Card style={{ gap: 10, padding: 14, marginTop: 30 }}>
       <Text style={ui.heading}>모험가 프로필</Text>
       <View style={{ flexDirection: 'row', alignItems: 'flex-end', gap: 8 }}>
         <View style={{ flex: 1 }}><Field label="닉네임" value={name} onChangeText={setName} maxLength={20} returnKeyType="done" onSubmitEditing={() => void save()} /></View>
         <Button title="저장" disabled={!name.trim() || name.trim() === state.profile?.name} busy={busy} onPress={() => void save()} />
       </View>
+      <Text style={ui.muted}>모험 시작일 · {state.profile?.startedAt}</Text>
     </Card>
   </Page>;
 }
