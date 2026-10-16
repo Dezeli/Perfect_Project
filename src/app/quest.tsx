@@ -118,8 +118,8 @@ export default function QuestEditor() {
     } else void checkPhotoRecognition();
   }
 
-  return <Page>
-    <View style={{ alignItems: 'flex-start' }}>
+  return <Page contentStyle={{ paddingTop: 24 }}>
+    <View style={{ alignItems: 'flex-end' }}>
       <Pressable accessibilityRole="button" accessibilityLabel="뒤로가기" onPress={() => router.back()} disabled={busy || recognizing} style={({ pressed }) => ({ width: 44, height: 44, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: '#786A56', borderRadius: 22, backgroundColor: pressed ? '#4B4338' : '#5A5144' })}>
         <Feather name="arrow-left" size={22} color="#EBCF9B" />
       </Pressable>
