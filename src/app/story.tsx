@@ -9,7 +9,7 @@ import { noteUri } from '../core/note-media';
 import { useStore } from '../core/store';
 import PerfectStory from '../../modules/perfect-story/src/PerfectStoryModule';
 
-type Source = { uri: string; kind: 'image' | 'video'; name: string };
+type Source = { uri: string; kind: 'image' | 'video' };
 type StoryFile = { uri: string; index: number; saved: boolean };
 const StoryPreview = lazy(() => import('../components/story-preview'));
 
@@ -35,7 +35,7 @@ export default function Story() {
       if (!remaining) return;
       const result = await ImagePicker.launchImageLibraryAsync({ mediaTypes: ['images', 'videos'], allowsMultipleSelection: true, selectionLimit: remaining, orderedSelection: true });
       if (result.canceled) return;
-      const picked = result.assets.slice(0, remaining).map((asset, i): Source => ({ uri: asset.uri, kind: asset.type === 'video' ? 'video' : 'image', name: asset.fileName || `장면 ${sources.length + i + 1}` }));
+      const picked = result.assets.slice(0, remaining).map((asset): Source => ({ uri: asset.uri, kind: asset.type === 'video' ? 'video' : 'image' }));
       setSources(current => [...current, ...picked].slice(0, 3));
       setFiles([]);
     } catch (error) { showError(error); }
@@ -94,19 +94,23 @@ export default function Story() {
     <View><Text accessibilityRole="header" style={ui.title}>스토리 만들기</Text><Text style={ui.muted}>{displayDay(date)}</Text></View>
     <Card style={{ gap: 8, padding: 12 }}>
       <View style={ui.between}><Text style={[ui.heading, { fontSize: 18, lineHeight: 26 }]}>실천 사진 · 영상</Text><Text style={[ui.muted, { color: color.gold }]}>{sources.length} / 3</Text></View>
-      {sources.length ? sources.map((source, index) => <View key={`${source.uri}-${index}`} style={{ flexDirection: 'row', gap: 9, padding: 6, borderRadius: 6, backgroundColor: '#263123', borderWidth: 1, borderColor: color.border }}>
-        <View style={{ width: 46, height: 60, borderRadius: 4, overflow: 'hidden', backgroundColor: '#121B13', alignItems: 'center', justifyContent: 'center' }}>
-          {source.kind === 'image' ? <Image source={{ uri: source.uri }} resizeMode="cover" style={{ width: '100%', height: '100%' }} /> : <Feather name="play-circle" size={22} color={color.gold} />}
-        </View>
-        <View style={{ flex: 1, justifyContent: 'center', gap: 2 }}><Text numberOfLines={1} style={[ui.text, { fontFamily: font.medium, fontSize: 14 }]}>{index + 1}. {source.name}</Text><Text style={[ui.muted, { fontSize: 11 }]}>{source.kind === 'video' ? '영상 · 배속' : '사진 · 5초'}</Text></View>
-        <Pressable accessibilityRole="button" accessibilityLabel={`${index + 1}번 장면 제거`} disabled={busy} onPress={() => { setSources(current => current.filter((_, i) => i !== index)); setFiles([]); }} hitSlop={8} style={{ padding: 4, alignSelf: 'flex-start' }}><Feather name="x" size={18} color={color.muted} /></Pressable>
-      </View>) : <Pressable accessibilityRole="button" disabled={busy} onPress={() => void selectSources()} style={({ pressed }) => ({ minHeight: 62, borderWidth: 1, borderStyle: 'dashed', borderColor: color.border, borderRadius: 6, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 9, backgroundColor: pressed ? '#2A3726' : '#172017' })}><Feather name="image" size={20} color={color.gold} /><Text style={[ui.text, { fontFamily: font.medium }]}>사진 · 영상 선택</Text></Pressable>}
-      {sources.length > 0 && sources.length < 3 && <Button title="장면 더하기" kind="secondary" disabled={busy} onPress={() => void selectSources()} />}
+      <View style={{ flexDirection: 'row', gap: 8 }}>
+        {Array.from({ length: 3 }, (_, index) => {
+          const source = sources[index];
+          return <View key={source?.uri ?? `empty-${index}`} style={{ flex: 1, aspectRatio: 1, borderWidth: 1, borderColor: color.border, borderRadius: 6, overflow: 'hidden', backgroundColor: '#172017' }}>
+            {source ? <>
+              {source.kind === 'image' ? <Image source={{ uri: source.uri }} resizeMode="cover" style={{ width: '100%', height: '100%' }} /> : <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}><Feather name="play-circle" size={28} color={color.gold} /></View>}
+              <Pressable accessibilityRole="button" accessibilityLabel={`${index + 1}번 장면 제거`} disabled={busy} onPress={() => { setSources(current => current.filter((_, i) => i !== index)); setFiles([]); }} style={{ position: 'absolute', top: 4, right: 4, width: 27, height: 27, alignItems: 'center', justifyContent: 'center', borderRadius: 14, backgroundColor: '#10150FDD' }}><Feather name="x" size={17} color={color.text} /></Pressable>
+            </> : <Pressable accessibilityRole="button" accessibilityLabel="실천 사진 또는 영상 추가" disabled={busy} onPress={() => void selectSources()} style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}><Feather name="plus" size={25} color={color.gold} /></Pressable>}
+          </View>;
+        })}
+      </View>
     </Card>
     <Card style={{ gap: 8, padding: 12 }}>
       <View style={ui.between}><Text style={[ui.heading, { fontSize: 18, lineHeight: 26 }]}>손글씨 계획</Text><Text style={ui.muted}>선택 사항</Text></View>
-      {!!planUri ? <Image source={{ uri: planUri }} resizeMode="contain" style={{ width: '100%', height: 80, backgroundColor: '#10150F', borderRadius: 5 }} /> : null}
-      <View style={ui.row}><View style={ui.flex}><Button title={planUri ? '사진 바꾸기' : '계획 사진 선택'} kind="secondary" disabled={busy} onPress={() => void selectPlan()} /></View>{!!planUri && <Pressable accessibilityRole="button" disabled={busy} onPress={() => { setPlanChoice(null); setFiles([]); }} style={{ padding: 10 }}><Text style={[ui.muted, { color: color.red }]}>제외</Text></Pressable>}</View>
+      <View style={{ width: '31%', aspectRatio: 1, borderWidth: 1, borderColor: color.border, borderRadius: 6, overflow: 'hidden', backgroundColor: '#172017' }}>
+        {planUri ? <><Image source={{ uri: planUri }} resizeMode="cover" style={{ width: '100%', height: '100%' }} /><Pressable accessibilityRole="button" accessibilityLabel="손글씨 계획 사진 제거" disabled={busy} onPress={() => { setPlanChoice(null); setFiles([]); }} style={{ position: 'absolute', top: 4, right: 4, width: 27, height: 27, alignItems: 'center', justifyContent: 'center', borderRadius: 14, backgroundColor: '#10150FDD' }}><Feather name="x" size={17} color={color.text} /></Pressable></> : <Pressable accessibilityRole="button" accessibilityLabel="손글씨 계획 사진 추가" disabled={busy} onPress={() => void selectPlan()} style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}><Feather name="plus" size={25} color={color.gold} /></Pressable>}
+      </View>
     </Card>
     <Card style={{ gap: 6, padding: 12 }}><Text style={[ui.heading, { fontSize: 18, lineHeight: 26 }]}>표시할 퀘스트</Text>{quests.length ? quests.map(q => <View key={q.id} style={{ flexDirection: 'row', alignItems: 'center', gap: 8, borderTopWidth: 1, borderTopColor: color.border, paddingTop: 5 }}><Text style={{ color: q.kind === 'main' ? color.gold : color.green, fontFamily: font.pixel, fontSize: 11, width: 28 }}>{q.kind === 'main' ? '메인' : '서브'}</Text><Text numberOfLines={1} style={[ui.text, { flex: 1, fontSize: 13, lineHeight: 19 }]}>{q.title}</Text><Feather name={q.status === 'completed' ? 'check-circle' : 'circle'} size={15} color={q.status === 'completed' ? color.green : color.muted} /></View>) : <Text style={ui.muted}>등록된 퀘스트 없음</Text>}</Card>
     <Button title={busy ? `${progress + 1}/${sources.length} 스토리 만드는 중` : `${sources.length}개 스토리 만들기`} busy={busy} disabled={!sources.length || busy} onPress={() => void exportStories()} />
