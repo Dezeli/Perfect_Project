@@ -17,7 +17,7 @@ export default function Stats() {
   const { state } = useStore();
   const today = useToday();
   const [page, setPage] = useState(0);
-  const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const [selectedDate, setSelectedDate] = useState<string | null>(today);
   const [detailsOpen, setDetailsOpen] = useState(false);
   const grassScroll = useRef<ScrollView>(null);
   const quests = state.quests.filter(q => q.date <= today);
