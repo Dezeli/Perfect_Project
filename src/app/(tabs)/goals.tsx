@@ -25,7 +25,7 @@ function GoalsContent() {
   const quests = state.quests.filter(q => q.date === date);
   return <Page backgroundImage={require('../../../assets/backgrounds/adventure-home-calm.png')} backgroundOverlayColor="#10150FE0" contentStyle={{ gap: 14, paddingTop: 24 }}>
     <View style={ui.between}><Text accessibilityRole="header" style={ui.title}>일일 퀘스트</Text><SettingsButton /></View>
-    <View style={[ui.row, { gap: 3, marginTop: 16 }]}>
+    <View style={[ui.row, { gap: 3, marginTop: 30 }]}>
         <Pressable accessibilityRole="button" accessibilityLabel="이전 날짜" onPress={() => setSelectedDate(shiftDay(date, -1))} style={({ pressed }) => ({ width: 34, height: 44, alignItems: 'center', justifyContent: 'center', borderRadius: 5, backgroundColor: pressed ? '#35432D' : '#263123' })}><Feather name="chevron-left" size={20} color={color.gold} /></Pressable>
         <Pressable accessibilityRole="button" accessibilityLabel={`${displayShortDay(date)} 날짜 선택`} onPress={() => setCalendarOpen(true)} style={({ pressed }) => ({ flex: 1, minWidth: 0, minHeight: 44, flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 8, borderRadius: 5, backgroundColor: pressed ? '#35432D' : '#263123' })}>
           <Feather name="calendar" size={16} color={color.gold} />
