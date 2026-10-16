@@ -50,7 +50,7 @@ export default function Stats() {
 
   return <Page backgroundImage={require('../../../assets/backgrounds/adventure-home-calm.png')} backgroundOverlayColor="#10150FE0" contentStyle={{ gap: 14, paddingTop: 24 }}>
     <View style={ui.between}><Text accessibilityRole="header" style={ui.title}>성장 기록</Text><SettingsButton /></View>
-    <Card style={{ backgroundColor: '#1B2319ED', paddingHorizontal: 8, paddingVertical: 12, marginTop: 10 }}>
+    <Card style={{ backgroundColor: '#1B2319ED', paddingHorizontal: 8, paddingVertical: 12, marginTop: 30 }}>
       <View style={[ui.row, { gap: 0 }]}>
         {statItems.map((item, index) => <View key={item.id} style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
           {index > 0 && <View style={{ width: 1, height: 30, backgroundColor: color.border }} />}
