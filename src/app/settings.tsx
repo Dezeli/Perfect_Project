@@ -9,11 +9,11 @@ export default function Settings() {
   const [name, setName] = useState(state.profile?.name ?? '');
   const [busy, setBusy] = useState(false);
   async function save() {
-    if (!name.trim() || busy) return;
+    if (!name.trim() || name.trim() === state.profile?.name || busy) return;
     setBusy(true);
     try {
       await mutate(s => ({ ...s, profile: s.profile ? { ...s.profile, name: name.trim() } : null }));
-      Alert.alert('이름을 변경했어요', '홈 화면에도 새 이름이 표시돼요.');
+      Alert.alert('닉네임을 변경했어요', '홈 화면에도 새 닉네임이 표시돼요.');
     } catch (err) { showError(err); } finally { setBusy(false); }
   }
   return <Page backgroundImage={require('../../assets/backgrounds/adventure-home-calm.png')} backgroundOverlayColor="#10150FE8" contentStyle={{ paddingTop: 24 }}>
@@ -23,8 +23,12 @@ export default function Settings() {
         <Feather name="arrow-left" size={22} color="#EBCF9B" />
       </Pressable>
     </View>
-    <Card><Text style={ui.heading}>모험가 프로필</Text><Field label="이름 또는 닉네임" value={name} onChangeText={setName} maxLength={20} /><Button title="이름 저장" disabled={!name.trim() || name.trim() === state.profile?.name} busy={busy} onPress={() => void save()} /><Text style={ui.muted}>모험 시작일 · {state.profile?.startedAt}</Text></Card>
-    <Card><Text style={ui.heading}>기록 저장</Text><Text style={ui.text}>이름과 퀘스트는 이 기기의 저장공간에 자동으로 저장돼요.</Text><Text style={ui.muted}>현재 {state.quests.length}개의 퀘스트 · 앱 삭제나 데이터 초기화 시 기록도 지워져요. 백업·복원은 후속 작업이에요.</Text></Card>
-    <Card><Text style={ui.heading}>성장 규칙</Text><Text style={ui.muted}>완료 퀘스트 XP로 성장해요. 100 XP마다 레벨업하고, 레벨마다 뽑기권을 받아요. 완료를 취소하거나 퀘스트를 삭제하면 XP를 회수해요.</Text></Card>
+    <Card style={{ gap: 10, padding: 14 }}>
+      <Text style={ui.heading}>모험가 프로필</Text>
+      <View style={{ flexDirection: 'row', alignItems: 'flex-end', gap: 8 }}>
+        <View style={{ flex: 1 }}><Field label="닉네임" value={name} onChangeText={setName} maxLength={20} returnKeyType="done" onSubmitEditing={() => void save()} /></View>
+        <Button title="저장" disabled={!name.trim() || name.trim() === state.profile?.name} busy={busy} onPress={() => void save()} />
+      </View>
+    </Card>
   </Page>;
 }
