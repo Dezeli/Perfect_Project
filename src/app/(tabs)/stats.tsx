@@ -6,6 +6,7 @@ import { useStore } from '../../core/store';
 import { dayStats, displayDay, rewardXp, shiftDay, statusLabels, streak, totalXp } from '../../core/domain';
 import { useToday } from '../../hooks/use-today';
 import { SettingsButton } from '../../components/settings-button';
+import { Dialog } from '../../components/dialog';
 import { Card, Page, Stat, color, font, ui } from '../../components/ui';
 
 const grassColors = ['#263125', '#3B5036', '#526D45', '#739457', '#A7C981'];
@@ -79,22 +80,25 @@ export default function Stats() {
     </Card>
 
     {selectedDate && selected && <Card style={{ backgroundColor: '#1B2319F2', gap: 0, padding: 12, borderLeftWidth: 2, borderLeftColor: color.gold }}>
-      <Pressable accessibilityRole="button" accessibilityLabel={`${selectedDate.slice(0, 4)}년 ${displayDay(selectedDate)} 상세 기록 ${detailsOpen ? '접기' : '보기'}`} accessibilityState={{ expanded: detailsOpen }} onPress={() => setDetailsOpen(open => !open)} style={({ pressed }) => ({ gap: 4, opacity: pressed ? 0.7 : 1 })}>
+      <Pressable accessibilityRole="button" accessibilityLabel={`${selectedDate.slice(0, 4)}년 ${displayDay(selectedDate)} 상세 기록 보기`} onPress={() => setDetailsOpen(true)} style={({ pressed }) => ({ gap: 4, opacity: pressed ? 0.7 : 1 })}>
         <View style={ui.between}>
           <Text style={[ui.text, { fontFamily: font.medium }]}>{selectedDate.slice(0, 4)}년 {displayDay(selectedDate)}</Text>
           <Text style={{ color: color.gold, fontFamily: font.display, fontSize: 17 }}>+{selected.xp} XP</Text>
         </View>
         <View style={ui.between}>
           <Text style={ui.muted}>{selected.total ? `${selected.completed}/${selected.total} 달성` : '기록 없음'}{noteCount ? ` · 노트 ${noteCount}장` : ''}</Text>
-          <Feather name={detailsOpen ? 'chevron-up' : 'chevron-down'} size={18} color={color.gold} />
+          <Feather name="chevron-right" size={18} color={color.gold} />
         </View>
       </Pressable>
-      {detailsOpen && <View style={{ gap: 10, borderTopWidth: 1, borderTopColor: color.border, marginTop: 11, paddingTop: 11 }}>
-        <Text style={ui.muted}>달성 {selected.completed} · 실패 {selected.failed} · 진행 중 {selected.total - selected.completed - selected.failed}</Text>
-        {selectedQuests.map(quest => <View key={quest.id} style={ui.between}><Text numberOfLines={2} style={[ui.text, { flex: 1 }]}>{quest.title}</Text><Text style={{ color: quest.status === 'completed' ? color.green : quest.status === 'failed' ? color.red : color.muted, fontFamily: font.medium, fontSize: 12 }}>{quest.status === 'completed' ? `+${rewardXp(quest)} XP` : statusLabels[quest.status]}</Text></View>)}
-        {!selectedQuests.length && !noteCount && <Text style={ui.muted}>이 날짜에는 기록이 없어요.</Text>}
-        {noteCount > 0 && <Pressable accessibilityRole="button" accessibilityLabel={`${displayDay(selectedDate)} 노트 보기`} onPress={() => router.push({ pathname: '/notes', params: { date: selectedDate } })} style={({ pressed }) => ({ alignSelf: 'flex-start', minHeight: 36, flexDirection: 'row', alignItems: 'center', gap: 5, opacity: pressed ? 0.6 : 1 })}><Feather name="image" size={15} color={color.gold} /><Text style={[ui.muted, ui.gold]}>노트 보기</Text></Pressable>}
-      </View>}
     </Card>}
+    <Dialog visible={detailsOpen && !!selectedDate} title="날짜별 기록" onClose={() => setDetailsOpen(false)}>
+      {selectedDate && selected && <>
+        <View style={ui.between}><Text style={[ui.text, { fontFamily: font.medium }]}>{selectedDate.slice(0, 4)}년 {displayDay(selectedDate)}</Text><Text style={{ color: color.gold, fontFamily: font.display, fontSize: 18 }}>+{selected.xp} XP</Text></View>
+        <Text style={ui.muted}>달성 {selected.completed} · 실패 {selected.failed} · 진행 중 {selected.total - selected.completed - selected.failed}</Text>
+        {selectedQuests.map(quest => <View key={quest.id} style={[ui.between, { gap: 10, borderTopWidth: 1, borderTopColor: color.border, paddingTop: 10 }]}><Text numberOfLines={2} style={[ui.text, { flex: 1 }]}>{quest.title}</Text><Text style={{ color: quest.status === 'completed' ? color.green : quest.status === 'failed' ? color.red : color.muted, fontFamily: font.medium, fontSize: 12 }}>{quest.status === 'completed' ? `+${rewardXp(quest)} XP` : statusLabels[quest.status]}</Text></View>)}
+        {!selectedQuests.length && !noteCount && <Text style={ui.muted}>이 날짜에는 기록이 없어요.</Text>}
+        {noteCount > 0 && <Pressable accessibilityRole="button" accessibilityLabel={`${displayDay(selectedDate)} 노트 보기`} onPress={() => { setDetailsOpen(false); router.push({ pathname: '/notes', params: { date: selectedDate } }); }} style={({ pressed }) => ({ alignSelf: 'flex-start', minHeight: 36, flexDirection: 'row', alignItems: 'center', gap: 5, opacity: pressed ? 0.6 : 1 })}><Feather name="image" size={15} color={color.gold} /><Text style={[ui.muted, ui.gold]}>노트 보기</Text></Pressable>}
+      </>}
+    </Dialog>
   </Page>;
 }
