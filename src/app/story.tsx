@@ -92,7 +92,7 @@ export default function Story() {
 
   const preview = files[previewIndex];
   return <Page backgroundImage={require('../../assets/backgrounds/adventure-home-calm.png')} backgroundOverlayColor="#10150FE8" contentStyle={{ gap: 10, paddingTop: 14 }}>
-    <Pressable accessibilityRole="button" accessibilityLabel="퀘스트로 돌아가기" disabled={busy} onPress={() => router.back()} style={{ alignSelf: 'flex-start', width: 38, height: 38, alignItems: 'center', justifyContent: 'center', backgroundColor: '#263123', borderRadius: 19 }}><Feather name="arrow-left" size={20} color={color.gold} /></Pressable>
+    <Pressable accessibilityRole="button" accessibilityLabel="퀘스트로 돌아가기" disabled={busy} onPress={() => router.back()} style={({ pressed }) => ({ width: 44, height: 44, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: '#786A56', borderRadius: 22, backgroundColor: pressed ? '#4B4338' : '#5A5144' })}><Feather name="arrow-left" size={22} color="#EBCF9B" /></Pressable>
     <View><Text accessibilityRole="header" style={ui.title}>스토리 만들기</Text><Text style={ui.muted}>{displayDay(date)}</Text></View>
     <Card style={{ gap: 8, padding: 12 }}>
       <View style={ui.between}><Text style={[ui.heading, { fontSize: 18, lineHeight: 26 }]}>실천 사진 · 영상</Text><Text style={[ui.muted, { color: color.gold }]}>{sources.length} / 3</Text></View>
