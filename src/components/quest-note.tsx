@@ -49,7 +49,7 @@ export function QuestNote({ quests, future }: { quests: Quest[]; future: boolean
   return <Card style={{ paddingVertical: 3, paddingHorizontal: 12, gap: 0 }}>
     {Array.from({ length: 5 }, (_, index) => {
       const quest = quests[index];
-      return <View key={quest?.id ?? `blank-${index}`} style={{ minHeight: 58, flexDirection: 'row', alignItems: 'center', gap: 7, borderBottomWidth: index === 4 ? 0 : 1, borderBottomColor: '#35432D80', borderLeftWidth: quest?.status === 'pending' || !quest ? 0 : 3, borderLeftColor: quest?.status === 'completed' ? color.green : color.red, backgroundColor: quest?.status === 'completed' ? '#345A3929' : quest?.status === 'failed' ? '#68403829' : 'transparent', paddingVertical: 5, paddingLeft: quest?.status === 'pending' || !quest ? 0 : 5 }}>
+      return <View key={quest?.id ?? `blank-${index}`} style={{ minHeight: 58, flexDirection: 'row', alignItems: 'center', gap: 7, borderBottomWidth: index === 4 ? 0 : 1, borderBottomColor: '#35432D80', paddingVertical: 5 }}>
         {quest ? <>
           <View style={{ flex: 1, minWidth: 0, flexDirection: 'row', alignItems: 'center', gap: 6 }}>
             <Text style={{ color: quest.kind === 'main' ? color.gold : color.green, backgroundColor: quest.kind === 'main' ? '#3A321F' : '#25372B', borderRadius: 3, overflow: 'hidden', paddingHorizontal: 4, paddingVertical: 3, fontFamily: font.pixel, fontSize: 10 }}>{quest.kind === 'main' ? '메인' : '서브'}</Text>
