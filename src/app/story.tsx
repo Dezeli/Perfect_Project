@@ -25,7 +25,9 @@ export default function Story() {
   const [busy, setBusy] = useState(false);
   const [progress, setProgress] = useState(0);
   const [previewIndex, setPreviewIndex] = useState(0);
+  const [selectedQuestIds, setSelectedQuestIds] = useState<string[] | null>(null);
   const quests = state.quests.filter(q => q.date === date);
+  const displayedQuests = selectedQuestIds === null ? quests : quests.filter(q => selectedQuestIds.includes(q.id));
   const stats = dayStats(state, date);
   if (!ready || !state.profile) return <Redirect href="/" />;
 
@@ -60,7 +62,7 @@ export default function Story() {
           mediaUri: source.uri, kind: source.kind, planUri: planUri ?? '',
           name: state.profile!.name, date, level: growth(totalXp(state, date)).level,
           completed: stats.completed, total: stats.total, xp: stats.xp,
-          quests: quests.map(q => ({ title: q.title, kind: q.kind, status: q.status })),
+          quests: displayedQuests.map(q => ({ title: q.title, kind: q.kind, status: q.status })),
         }));
         outputs.push({ uri, index: i, saved: false });
         setFiles([...outputs]); setProgress(i + 1);
@@ -112,7 +114,35 @@ export default function Story() {
         <View style={{ flex: 1 }}><Text style={{ color: color.text, fontFamily: font.medium, fontSize: 15 }}>손글씨 계획</Text><Text style={ui.muted}>선택 사항 · 스토리에 작게 삽입</Text></View>
       </View>
     </Card>
-    <Card style={{ gap: 6, padding: 12 }}><Text style={[ui.heading, { fontSize: 18, lineHeight: 26 }]}>표시할 퀘스트</Text>{quests.length ? quests.map(q => <View key={q.id} style={{ flexDirection: 'row', alignItems: 'center', gap: 8, borderTopWidth: 1, borderTopColor: color.border, paddingTop: 5 }}><Text style={{ color: q.kind === 'main' ? color.gold : color.green, fontFamily: font.pixel, fontSize: 11, width: 28 }}>{q.kind === 'main' ? '메인' : '서브'}</Text><Text numberOfLines={1} style={[ui.text, { flex: 1, fontSize: 13, lineHeight: 19 }]}>{q.title}</Text><Feather name={q.status === 'completed' ? 'check-circle' : 'circle'} size={15} color={q.status === 'completed' ? color.green : color.muted} /></View>) : <Text style={ui.muted}>등록된 퀘스트 없음</Text>}</Card>
+    <Card style={{ gap: 6, padding: 12 }}>
+      <View style={ui.between}>
+        <Text style={[ui.heading, { fontSize: 18, lineHeight: 26 }]}>표시할 퀘스트</Text>
+        <Text style={ui.muted}>{displayedQuests.length} / {quests.length}</Text>
+      </View>
+      {quests.length ? quests.map(q => {
+        const selected = displayedQuests.some(item => item.id === q.id);
+        return <Pressable
+          key={q.id}
+          accessibilityRole="checkbox"
+          accessibilityLabel={`${q.kind === 'main' ? '메인' : '서브'} 퀘스트 ${q.title}`}
+          accessibilityState={{ checked: selected, disabled: busy }}
+          disabled={busy}
+          onPress={() => {
+            setSelectedQuestIds(current => {
+              const ids = current ?? quests.map(item => item.id);
+              return ids.includes(q.id) ? ids.filter(id => id !== q.id) : [...ids, q.id];
+            });
+            setFiles([]);
+            setPreviewIndex(0);
+          }}
+          style={{ flexDirection: 'row', alignItems: 'center', gap: 8, borderTopWidth: 1, borderTopColor: color.border, minHeight: 38, paddingVertical: 5 }}
+        >
+          <Text style={{ color: q.kind === 'main' ? color.gold : color.green, fontFamily: font.pixel, fontSize: 11, width: 28 }}>{q.kind === 'main' ? '메인' : '서브'}</Text>
+          <Text numberOfLines={1} style={[ui.text, { flex: 1, fontSize: 13, lineHeight: 19, opacity: selected ? 1 : 0.55 }]}>{q.title}</Text>
+          <Feather name={selected ? 'check-square' : 'square'} size={18} color={selected ? color.gold : color.muted} />
+        </Pressable>;
+      }) : <Text style={ui.muted}>등록된 퀘스트 없음</Text>}
+    </Card>
     <Button title={busy ? `${progress + 1}/${sources.length} 스토리 만드는 중` : `${sources.length}개 스토리 만들기`} busy={busy} disabled={!sources.length || busy} onPress={() => void exportStories()} />
     {files.length > 0 && <Card style={{ gap: 15 }}><Text style={ui.heading}>완성된 스토리</Text><View style={ui.row}>{files.map((file, i) => <Pressable key={file.uri} accessibilityRole="button" accessibilityState={{ selected: previewIndex === i }} onPress={() => setPreviewIndex(i)} style={{ padding: 10, borderWidth: 1, borderColor: previewIndex === i ? color.gold : color.border, borderRadius: 5 }}><Text style={{ color: previewIndex === i ? color.gold : color.text, fontFamily: font.medium }}>{file.index + 1}번</Text></Pressable>)}</View>{preview && <><Suspense fallback={<Text style={ui.muted}>미리보기를 여는 중...</Text>}><StoryPreview key={preview.uri} uri={preview.uri} /></Suspense><Button title={preview.saved ? '갤러리 저장 완료' : '갤러리에 저장'} kind="secondary" disabled={busy || preview.saved} onPress={() => void saveFile(preview)} /><Button title="공유하기" disabled={busy} onPress={() => void shareFile(preview)} /></>}</Card>}
     {Platform.OS !== 'android' && <Text style={ui.muted}>영상 제작은 현재 안드로이드 개발 빌드에서 지원해요.</Text>}
