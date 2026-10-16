@@ -53,7 +53,7 @@ export function QuestNote({ quests, future }: { quests: Quest[]; future: boolean
         {quest ? <>
           <View style={{ flex: 1, minWidth: 0, flexDirection: 'row', alignItems: 'center', gap: 6 }}>
             <Text style={{ color: quest.kind === 'main' ? color.gold : color.green, backgroundColor: quest.kind === 'main' ? '#3A321F' : '#25372B', borderRadius: 3, overflow: 'hidden', paddingHorizontal: 4, paddingVertical: 3, fontFamily: font.pixel, fontSize: 10 }}>{quest.kind === 'main' ? '메인' : '서브'}</Text>
-            <View style={{ flex: 1, height: 38, justifyContent: 'center' }}><Text numberOfLines={2} style={{ color: quest.status === 'failed' ? color.muted : color.text, fontFamily: font.medium, fontSize: 14, lineHeight: 19, textDecorationLine: quest.status === 'completed' ? 'line-through' : 'none' }}>{quest.title}</Text></View>
+            <View style={{ flex: 1, height: 38, justifyContent: 'center' }}><Text numberOfLines={2} style={{ color: quest.status === 'completed' ? '#C9E9BA' : quest.status === 'failed' ? color.muted : color.text, fontFamily: font.medium, fontSize: 14, lineHeight: 19, ...(quest.status === 'completed' ? { textShadowColor: '#70B477', textShadowOffset: { width: 0, height: 0 }, textShadowRadius: 2 } : {}) }}>{quest.title}</Text></View>
           </View>
           {!future && <View style={{ flexDirection: 'row', gap: 3 }}>
             <ResultButton quest={quest} status="completed" disabled={!!busyId} onPress={() => void toggle(quest, 'completed')} />
