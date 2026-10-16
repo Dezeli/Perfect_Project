@@ -38,10 +38,16 @@ export default function Stats() {
 
   return <Page backgroundImage={require('../../../assets/backgrounds/adventure-home-calm.png')} backgroundOverlayColor="#10150FE0" contentStyle={{ gap: 14, paddingTop: 24 }}>
     <View style={ui.between}><Text accessibilityRole="header" style={ui.title}>성장 기록</Text><SettingsButton /></View>
-    <Card style={{ backgroundColor: '#1B2319ED', paddingVertical: 20 }}>
-      <View style={ui.row}><Stat value={done.length} label="달성" /><Stat value={quests.length ? `${Math.round(done.length / quests.length * 100)}%` : '0%'} label="달성률" /></View>
-      <View style={{ height: 1, backgroundColor: color.border }} />
-      <View style={ui.row}><Stat value={totalXp(state, today)} label="누적 XP" /><Stat value={`${streak(state, today)}일`} label="연속 달성" /></View>
+    <Card style={{ backgroundColor: '#1B2319ED', paddingHorizontal: 8, paddingVertical: 12 }}>
+      <View style={[ui.row, { gap: 0 }]}>
+        <Stat compact value={done.length} label="달성" />
+        <View style={{ width: 1, height: 30, backgroundColor: color.border }} />
+        <Stat compact value={quests.length ? `${Math.round(done.length / quests.length * 100)}%` : '0%'} label="달성률" />
+        <View style={{ width: 1, height: 30, backgroundColor: color.border }} />
+        <Stat compact value={totalXp(state, today)} label="누적 XP" />
+        <View style={{ width: 1, height: 30, backgroundColor: color.border }} />
+        <Stat compact value={`${streak(state, today)}일`} label="연속 달성" />
+      </View>
     </Card>
 
     <View style={[ui.between, { marginTop: 8 }]}>
