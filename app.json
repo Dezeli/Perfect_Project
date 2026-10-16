@@ -1,17 +1,19 @@
 {
   "expo": {
-    "name": "perfect_project",
-    "slug": "perfect_project",
+    "name": "완벽그자체 프로젝트",
+    "slug": "perfect-project",
+    "scheme": "perfect-project",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "dark",
     "ios": {
       "supportsTablet": true
     },
     "android": {
+      "package": "com.perfectproject.jaehyung",
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
+        "backgroundColor": "#10150F",
         "foregroundImage": "./assets/android-icon-foreground.png",
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
@@ -20,6 +22,28 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "plugins": [
+      "expo-router",
+      "expo-sqlite",
+      "expo-font",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "손글씨 노트 사진을 선택하기 위해 사진 접근을 사용해요.",
+          "cameraPermission": "손글씨 노트를 촬영하기 위해 카메라를 사용해요.",
+          "microphonePermission": false
+        }
+      ],
+      [
+        "expo-media-library",
+        {
+          "savePhotosPermission": "완성된 스토리를 갤러리에 저장하기 위해 사용해요.",
+          "granularPermissions": ["video"]
+        }
+      ],
+      "expo-sharing",
+      "expo-video"
+    ]
   }
 }
