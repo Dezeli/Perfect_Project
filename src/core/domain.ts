@@ -18,7 +18,7 @@ export type AppState = {
   model: { file: string; name: string } | null;
 };
 export const categories: Category[] = ['체력', '지혜', '꾸준함', '생활'];
-export const statusLabels: Record<QuestStatus, string> = { pending: '진행 중', completed: '완료', failed: '실패' };
+export const statusLabels: Record<QuestStatus, string> = { pending: '진행 중', completed: '완료', failed: '미달성' };
 export const questKindLimits: Record<QuestKind, number> = { main: 3, sub: 2 };
 export const questXp: Record<QuestKind, number> = { main: 20, sub: 10 };
 export type Equipment = { id: string; slot: Slot; name: string; rarity: '일반' | '희귀' | '영웅'; description: string; flat?: number; percent?: number; category?: Category; first?: number; allClear?: number };

@@ -12,7 +12,7 @@ function ResultButton({ quest, status, disabled, onPress }: { quest: Quest; stat
   return <Animated.View style={{ transform: [{ scale }] }}>
     <Pressable
       accessibilityRole="button"
-      accessibilityLabel={`${quest.title} ${selected ? (success ? '완료 취소' : '실패 취소') : (success ? '완료' : '실패')}`}
+      accessibilityLabel={`${quest.title} ${selected ? (success ? '완료 취소' : '미달성 취소') : (success ? '완료' : '미달성')}`}
       accessibilityState={{ selected, disabled }}
       disabled={disabled}
       onPress={() => {

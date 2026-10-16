@@ -9,7 +9,7 @@ import { SettingsButton } from '../../components/settings-button';
 import { Dialog } from '../../components/dialog';
 import { Card, Page, Stat, color, font, ui } from '../../components/ui';
 
-const grassColors = ['#263125', '#3B5036', '#526D45', '#739457', '#A7C981'];
+const grassColors = ['#263125', '#354732', '#48603D', '#5E7B4B', '#7E9F5E', '#A7C981'];
 const weekCount = 52;
 const cellSize = 14;
 
@@ -71,12 +71,15 @@ export default function Stats() {
           <View style={{ flexDirection: 'row', gap: 3 }}>
             {weeks.map((week, index) => <View key={week.monday} style={{ width: cellSize, gap: 3 }}>
               <Text numberOfLines={1} style={{ height: 16, width: 30, color: color.muted, fontFamily: font.body, fontSize: 9 }}>{index === 0 || week.monday.slice(0, 7) !== weeks[index - 1].monday.slice(0, 7) ? `${Number(week.monday.slice(5, 7))}월` : ''}</Text>
-              {week.days.map(date => date > today ? <View key={date} style={{ width: cellSize, height: cellSize }} /> : <Pressable key={date} accessibilityRole="button" accessibilityLabel={`${date.slice(0, 4)}년 ${displayDay(date)}, 완료 ${completedByDate.get(date) ?? 0}개`} accessibilityState={{ selected: selectedDate === date }} onPress={() => { setSelectedDate(date); setDetailsOpen(false); }} hitSlop={2} style={({ pressed }) => ({ width: cellSize, height: cellSize, borderRadius: 2, borderWidth: selectedDate === date ? 2 : 0, borderColor: color.gold, backgroundColor: grassColors[Math.min(4, completedByDate.get(date) ?? 0)], opacity: pressed ? 0.6 : 1 })} />)}
+              {week.days.map(date => date > today ? <View key={date} style={{ width: cellSize, height: cellSize }} /> : <Pressable key={date} accessibilityRole="button" accessibilityLabel={`${date.slice(0, 4)}년 ${displayDay(date)}, 완료 ${completedByDate.get(date) ?? 0}개`} accessibilityState={{ selected: selectedDate === date }} onPress={() => { setSelectedDate(date); setDetailsOpen(false); }} hitSlop={2} style={({ pressed }) => ({ width: cellSize, height: cellSize, borderRadius: 2, borderWidth: selectedDate === date ? 2 : 0, borderColor: color.gold, backgroundColor: grassColors[Math.min(5, completedByDate.get(date) ?? 0)], opacity: pressed ? 0.6 : 1 })} />)}
             </View>)}
           </View>
         </ScrollView>
       </View>
-      <View style={[ui.between, { alignSelf: 'flex-end', gap: 5 }]}><Text style={[ui.muted, { fontSize: 10 }]}>완료 적음</Text>{grassColors.map(shade => <View key={shade} style={{ width: 11, height: 11, borderRadius: 2, backgroundColor: shade }} />)}<Text style={[ui.muted, { fontSize: 10 }]}>많음</Text></View>
+      <View style={{ alignSelf: 'flex-end', flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+        <Text style={[ui.muted, { fontSize: 10 }]}>완료</Text>
+        {grassColors.map((shade, count) => <View key={count} style={{ flexDirection: 'row', alignItems: 'center', gap: 3 }}><View style={{ width: 11, height: 11, borderRadius: 2, backgroundColor: shade }} /><Text style={[ui.muted, { fontSize: 10 }]}>{count}</Text></View>)}
+      </View>
     </Card>
 
     {selectedDate && selected && <Card style={{ backgroundColor: '#1B2319F2', gap: 0, padding: 12, borderLeftWidth: 2, borderLeftColor: color.gold }}>
@@ -94,7 +97,7 @@ export default function Stats() {
     <Dialog visible={detailsOpen && !!selectedDate} title="날짜별 기록" onClose={() => setDetailsOpen(false)}>
       {selectedDate && selected && <>
         <View style={ui.between}><Text style={[ui.text, { fontFamily: font.medium }]}>{selectedDate.slice(0, 4)}년 {displayDay(selectedDate)}</Text><Text style={{ color: color.gold, fontFamily: font.display, fontSize: 18 }}>+{selected.xp} XP</Text></View>
-        <Text style={ui.muted}>달성 {selected.completed} · 실패 {selected.failed} · 진행 중 {selected.total - selected.completed - selected.failed}</Text>
+        <Text style={ui.muted}>달성 {selected.completed} · 미달성 {selected.failed} · 진행 중 {selected.total - selected.completed - selected.failed}</Text>
         {selectedQuests.map(quest => <View key={quest.id} style={[ui.between, { gap: 10, borderTopWidth: 1, borderTopColor: color.border, paddingTop: 10 }]}><Text numberOfLines={2} style={[ui.text, { flex: 1 }]}>{quest.title}</Text><Text style={{ color: quest.status === 'completed' ? color.green : quest.status === 'failed' ? color.red : color.muted, fontFamily: font.medium, fontSize: 12 }}>{quest.status === 'completed' ? `+${rewardXp(quest)} XP` : statusLabels[quest.status]}</Text></View>)}
         {!selectedQuests.length && !noteCount && <Text style={ui.muted}>이 날짜에는 기록이 없어요.</Text>}
         {noteCount > 0 && <Pressable accessibilityRole="button" accessibilityLabel={`${displayDay(selectedDate)} 노트 보기`} onPress={() => { setDetailsOpen(false); router.push({ pathname: '/notes', params: { date: selectedDate } }); }} style={({ pressed }) => ({ alignSelf: 'flex-start', minHeight: 36, flexDirection: 'row', alignItems: 'center', gap: 5, opacity: pressed ? 0.6 : 1 })}><Feather name="image" size={15} color={color.gold} /><Text style={[ui.muted, ui.gold]}>노트 보기</Text></Pressable>}
