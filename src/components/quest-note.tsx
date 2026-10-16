@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 import { type Quest, setQuestStatus } from '../core/domain';
 import { useStore } from '../core/store';
-import { Card, color, font, showError } from './ui';
+import { Card, color, font, showError, ui } from './ui';
 
 export function QuestNote({ quests, future }: { quests: Quest[]; future: boolean }) {
   const { mutate } = useStore();
@@ -16,6 +16,12 @@ export function QuestNote({ quests, future }: { quests: Quest[]; future: boolean
     catch (error) { showError(error); }
     finally { setBusyId(null); }
   }
+
+  if (!quests.length) return <Card style={{ height: 298, alignItems: 'center', justifyContent: 'center', gap: 9 }}>
+    <Text style={{ color: color.gold, fontSize: 28 }}>◇</Text>
+    <Text style={ui.heading}>퀘스트가 비어 있어요</Text>
+    <Text style={ui.muted}>오늘의 목표를 등록해봐요.</Text>
+  </Card>;
 
   return <Card style={{ paddingVertical: 3, paddingHorizontal: 12, gap: 0 }}>
     {Array.from({ length: 5 }, (_, index) => {
@@ -30,7 +36,7 @@ export function QuestNote({ quests, future }: { quests: Quest[]; future: boolean
             <Pressable accessibilityRole="button" accessibilityLabel={`${quest.title} ${quest.status === 'completed' ? '완료 취소' : '완료'}`} accessibilityState={{ selected: quest.status === 'completed', disabled: future || !!busyId }} disabled={future || !!busyId} onPress={() => void toggle(quest, 'completed')} style={({ pressed }) => ({ width: 35, height: 39, alignItems: 'center', justifyContent: 'center', borderRadius: 5, borderWidth: 1, borderColor: quest.status === 'completed' ? '#8FC779' : '#557B58', backgroundColor: quest.status === 'completed' ? '#345A39' : pressed ? '#35513A' : '#253E2B', opacity: future ? 0.45 : 1 })}><Feather name="check" size={20} color={quest.status === 'completed' ? '#D4F2B5' : color.green} /></Pressable>
             <Pressable accessibilityRole="button" accessibilityLabel={`${quest.title} ${quest.status === 'failed' ? '실패 취소' : '실패'}`} accessibilityState={{ selected: quest.status === 'failed', disabled: future || !!busyId }} disabled={future || !!busyId} onPress={() => void toggle(quest, 'failed')} style={({ pressed }) => ({ width: 35, height: 39, alignItems: 'center', justifyContent: 'center', borderRadius: 5, borderWidth: 1, borderColor: quest.status === 'failed' ? '#D88C80' : '#855750', backgroundColor: quest.status === 'failed' ? '#684038' : pressed ? '#573A35' : '#3E2927', opacity: future ? 0.45 : 1 })}><Feather name="x" size={20} color={quest.status === 'failed' ? '#FFD0C6' : color.red} /></Pressable>
           </View>
-        </> : <Text style={{ flex: 1, color: color.muted, fontFamily: font.body, fontSize: 14 }}>{index === 0 && !quests.length ? '퀘스트가 비어 있어요' : ''}</Text>}
+        </> : <View style={{ flex: 1 }} />}
       </View>;
     })}
   </Card>;
