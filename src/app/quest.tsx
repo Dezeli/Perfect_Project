@@ -124,7 +124,7 @@ export default function QuestEditor() {
         <Feather name="arrow-left" size={22} color="#EBCF9B" />
       </Pressable>
     </View>
-    <Text style={ui.muted}>{displayShortDay(date)}</Text>
+    <Text style={[ui.muted, { marginTop: -10 }]}>{displayShortDay(date)}</Text>
     <View style={ui.between}>
       <Text accessibilityRole="header" style={[ui.title, { flexShrink: 1 }]}>퀘스트 설정</Text>
       <Pressable accessibilityRole="button" accessibilityLabel="손글씨 사진 인식" disabled={busy || recognizing} onPress={requestPhotoRecognition} style={({ pressed }) => ({ minHeight: 38, paddingHorizontal: 10, flexDirection: 'row', alignItems: 'center', gap: 5, borderWidth: 1, borderColor: color.border, borderRadius: 5, backgroundColor: '#263123', opacity: busy || recognizing ? 0.5 : pressed ? 0.7 : 1 })}>
