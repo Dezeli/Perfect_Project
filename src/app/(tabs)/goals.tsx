@@ -5,10 +5,10 @@ import Feather from '@expo/vector-icons/Feather';
 import { useStore } from '../../core/store';
 import { dayStats, displayShortDay, shiftDay } from '../../core/domain';
 import { useToday } from '../../hooks/use-today';
-import { QuestCard } from '../../components/quest-card';
+import { QuestNote } from '../../components/quest-note';
 import { QuestDatePicker } from '../../components/quest-date-picker';
 import { SettingsButton } from '../../components/settings-button';
-import { Button, Empty, Page, color, font, ui } from '../../components/ui';
+import { Button, Page, color, font, ui } from '../../components/ui';
 
 export default function Goals() {
   const { resetDay } = useLocalSearchParams<{ resetDay?: string }>();
@@ -35,7 +35,7 @@ function GoalsContent() {
         <Pressable accessibilityRole="button" accessibilityLabel="다음 날짜" onPress={() => setSelectedDate(shiftDay(date, 1))} style={({ pressed }) => ({ width: 34, height: 44, alignItems: 'center', justifyContent: 'center', borderRadius: 5, backgroundColor: pressed ? '#35432D' : '#263123' })}><Feather name="chevron-right" size={20} color={color.gold} /></Pressable>
     </View>
     <View style={[ui.between, { marginTop: 5, paddingHorizontal: 2 }]}><Text style={{ color: color.text, fontFamily: font.display, fontSize: 20 }}>퀘스트</Text><Text style={[ui.muted, { fontSize: 12 }]}>{daily.completed}/{daily.total} 달성 · <Text style={ui.gold}>+{daily.xp} XP</Text></Text></View>
-    {quests.length ? quests.map(q => <QuestCard key={q.id} quest={q} />) : <Empty title="퀘스트가 비어 있어요" detail="오늘의 목표를 등록해봐요." />}
+    <QuestNote quests={quests} future={date > today} />
     <View style={ui.row}>
       <View style={ui.flex}><Button title={quests.length ? '퀘스트 수정' : '퀘스트 추가'} onPress={() => router.push({ pathname: '/quest', params: { date } })} /></View>
       <View style={ui.flex}><Button title="스토리 만들기" kind="secondary" onPress={() => router.push({ pathname: '/story', params: { date } })} /></View>
