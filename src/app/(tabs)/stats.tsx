@@ -7,6 +7,7 @@ import { dayStats, displayDay, rewardXp, shiftDay, statusLabels, streak, totalXp
 import { useToday } from '../../hooks/use-today';
 import { SettingsButton } from '../../components/settings-button';
 import { Dialog } from '../../components/dialog';
+import { GrowthStatLog, type GrowthStat } from '../../components/growth-stat-log';
 import { Card, Page, Stat, color, font, ui } from '../../components/ui';
 
 const grassColors = ['#263125', '#354732', '#48603D', '#5E7B4B', '#7E9F5E', '#A7C981'];
@@ -19,11 +20,18 @@ export default function Stats() {
   const [page, setPage] = useState(0);
   const [selectedDate, setSelectedDate] = useState<string | null>(today);
   const [detailsOpen, setDetailsOpen] = useState(false);
+  const [selectedStat, setSelectedStat] = useState<GrowthStat | null>(null);
   const grassScroll = useRef<ScrollView>(null);
   const quests = state.quests.filter(q => q.date <= today);
   const done = quests.filter(q => q.status === 'completed');
   const mainQuests = quests.filter(q => q.kind === 'main');
   const completedMain = mainQuests.filter(q => q.status === 'completed').length;
+  const statItems: { id: GrowthStat; value: string | number; label: string }[] = [
+    { id: 'completed', value: done.length, label: '달성' },
+    { id: 'mainRate', value: mainQuests.length ? `${Math.round(completedMain / mainQuests.length * 100)}%` : '0%', label: '메인 달성률' },
+    { id: 'xp', value: totalXp(state, today), label: '누적 XP' },
+    { id: 'streak', value: `${streak(state, today)}일`, label: '연속 달성' },
+  ];
   const completedByDate = new Map<string, number>();
   for (const quest of done) completedByDate.set(quest.date, (completedByDate.get(quest.date) ?? 0) + 1);
 
@@ -44,13 +52,12 @@ export default function Stats() {
     <View style={ui.between}><Text accessibilityRole="header" style={ui.title}>성장 기록</Text><SettingsButton /></View>
     <Card style={{ backgroundColor: '#1B2319ED', paddingHorizontal: 8, paddingVertical: 12 }}>
       <View style={[ui.row, { gap: 0 }]}>
-        <Stat compact value={done.length} label="달성" />
-        <View style={{ width: 1, height: 30, backgroundColor: color.border }} />
-        <Stat compact value={mainQuests.length ? `${Math.round(completedMain / mainQuests.length * 100)}%` : '0%'} label="메인 달성률" />
-        <View style={{ width: 1, height: 30, backgroundColor: color.border }} />
-        <Stat compact value={totalXp(state, today)} label="누적 XP" />
-        <View style={{ width: 1, height: 30, backgroundColor: color.border }} />
-        <Stat compact value={`${streak(state, today)}일`} label="연속 달성" />
+        {statItems.map((item, index) => <View key={item.id} style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
+          {index > 0 && <View style={{ width: 1, height: 30, backgroundColor: color.border }} />}
+          <Pressable accessibilityRole="button" accessibilityLabel={`${item.label} ${item.value}, 기록 보기`} onPress={() => setSelectedStat(item.id)} style={({ pressed }) => ({ flex: 1, minHeight: 44, justifyContent: 'center', opacity: pressed ? 0.55 : 1 })}>
+            <Stat compact value={item.value} label={item.label} />
+          </Pressable>
+        </View>)}
       </View>
     </Card>
 
@@ -103,5 +110,6 @@ export default function Stats() {
         {noteCount > 0 && <Pressable accessibilityRole="button" accessibilityLabel={`${displayDay(selectedDate)} 노트 보기`} onPress={() => { setDetailsOpen(false); router.push({ pathname: '/notes', params: { date: selectedDate } }); }} style={({ pressed }) => ({ alignSelf: 'flex-start', minHeight: 36, flexDirection: 'row', alignItems: 'center', gap: 5, opacity: pressed ? 0.6 : 1 })}><Feather name="image" size={15} color={color.gold} /><Text style={[ui.muted, ui.gold]}>노트 보기</Text></Pressable>}
       </>}
     </Dialog>
+    {selectedStat && <GrowthStatLog stat={selectedStat} state={state} today={today} onClose={() => setSelectedStat(null)} />}
   </Page>;
 }
