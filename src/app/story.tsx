@@ -105,11 +105,11 @@ export default function Story() {
           </View>;
         })}
       </View>
-    </Card>
-    <Card style={{ gap: 8, padding: 12 }}>
-      <View style={ui.between}><Text style={[ui.heading, { fontSize: 18, lineHeight: 26 }]}>손글씨 계획</Text><Text style={ui.muted}>선택 사항</Text></View>
-      <View style={{ width: '31%', aspectRatio: 1, borderWidth: 1, borderColor: color.border, borderRadius: 6, overflow: 'hidden', backgroundColor: '#172017' }}>
-        {planUri ? <><Image source={{ uri: planUri }} resizeMode="cover" style={{ width: '100%', height: '100%' }} /><Pressable accessibilityRole="button" accessibilityLabel="손글씨 계획 사진 제거" disabled={busy} onPress={() => { setPlanChoice(null); setFiles([]); }} style={{ position: 'absolute', top: 4, right: 4, width: 27, height: 27, alignItems: 'center', justifyContent: 'center', borderRadius: 14, backgroundColor: '#10150FDD' }}><Feather name="x" size={17} color={color.text} /></Pressable></> : <Pressable accessibilityRole="button" accessibilityLabel="손글씨 계획 사진 추가" disabled={busy} onPress={() => void selectPlan()} style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}><Feather name="plus" size={25} color={color.gold} /></Pressable>}
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, borderTopWidth: 1, borderTopColor: color.border, paddingTop: 10 }}>
+        <View style={{ width: 58, height: 58, borderWidth: 1, borderColor: color.border, borderRadius: 6, overflow: 'hidden', backgroundColor: '#172017' }}>
+          {planUri ? <><Image source={{ uri: planUri }} resizeMode="cover" style={{ width: '100%', height: '100%' }} /><Pressable accessibilityRole="button" accessibilityLabel="손글씨 계획 사진 제거" disabled={busy} onPress={() => { setPlanChoice(null); setFiles([]); }} style={{ position: 'absolute', top: 3, right: 3, width: 25, height: 25, alignItems: 'center', justifyContent: 'center', borderRadius: 13, backgroundColor: '#10150FDD' }}><Feather name="x" size={16} color={color.text} /></Pressable></> : <Pressable accessibilityRole="button" accessibilityLabel="손글씨 계획 사진 추가" disabled={busy} onPress={() => void selectPlan()} style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}><Feather name="plus" size={22} color={color.gold} /></Pressable>}
+        </View>
+        <View style={{ flex: 1 }}><Text style={{ color: color.text, fontFamily: font.medium, fontSize: 15 }}>손글씨 계획</Text><Text style={ui.muted}>선택 사항 · 스토리에 작게 삽입</Text></View>
       </View>
     </Card>
     <Card style={{ gap: 6, padding: 12 }}><Text style={[ui.heading, { fontSize: 18, lineHeight: 26 }]}>표시할 퀘스트</Text>{quests.length ? quests.map(q => <View key={q.id} style={{ flexDirection: 'row', alignItems: 'center', gap: 8, borderTopWidth: 1, borderTopColor: color.border, paddingTop: 5 }}><Text style={{ color: q.kind === 'main' ? color.gold : color.green, fontFamily: font.pixel, fontSize: 11, width: 28 }}>{q.kind === 'main' ? '메인' : '서브'}</Text><Text numberOfLines={1} style={[ui.text, { flex: 1, fontSize: 13, lineHeight: 19 }]}>{q.title}</Text><Feather name={q.status === 'completed' ? 'check-circle' : 'circle'} size={15} color={q.status === 'completed' ? color.green : color.muted} /></View>) : <Text style={ui.muted}>등록된 퀘스트 없음</Text>}</Card>
